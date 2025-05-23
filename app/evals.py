@@ -1,12 +1,16 @@
 import pandas as pd
 import numpy as np
-
+from sklearn.linear_model import LinearRegression   
+from .utils import to_percent
 # Evaluation metrics implementation
 
 def answer_accuracy(df):
     """Compute answer accuracy (exact match or close for floats)"""
     def is_correct(row):
         a, g = row['agent_answer'], row['gold_answer']
+        # Ensure our answers are parsed correctly
+        print("Agent answer:", a)
+        print("Gold answer:", g)
         try:
             # Try float comparison with tolerance
             return np.isclose(float(a), float(g), atol=1e-3)
@@ -16,10 +20,22 @@ def answer_accuracy(df):
     return correct.mean(), correct
 
 def turn_based_performance(df):
-    """Compute accuracy per turn_index and overall"""
+    """Compute accuracy per turn_index and the overall degradation rate via linear regression (accuracy vs. turn index)"""
     turn_acc = df.groupby('turn_index').apply(lambda g: (g['agent_answer'] == g['gold_answer']).mean())
     overall = (df['agent_answer'] == df['gold_answer']).mean()
-    return turn_acc, overall
+
+    # Format data to fit a regression model
+
+    x = turn_acc.index.values.reshape(-1, 1)
+    y = turn_acc.values
+
+    if len(x) > 1:
+        reg = LinearRegression().fit(x, y)
+        degradation_rate = reg.coef_[0]
+    else:
+        degradation_rate = np.nan  # Not enough points to compute slope
+
+    return turn_acc, overall, degradation_rate
 
 def run_eval(orig_df, agent_df):
     """
@@ -36,8 +52,7 @@ def run_eval(orig_df, agent_df):
             merged[col] = merged.get(f'{col}_agent', None)
     print("--- Evaluation Results ---")
     acc, _ = answer_accuracy(merged)
-    print(f"Answer Accuracy: {acc:.3f}")
-    turn_acc, overall = turn_based_performance(merged)
-    print("Turn-based Accuracy:")
-    print(turn_acc)
-    print(f"Overall Turn-based Accuracy: {overall:.3f}")
+    print(f"Overall Answer Accuracy: {to_percent(acc)}")
+    turn_acc, _, degradation_rate = turn_based_performance(merged)
+    print(f"Turn-based Accuracy:{turn_acc}")
+    print(f"Turn Degradation Rate: {to_percent(degradation_rate)}")

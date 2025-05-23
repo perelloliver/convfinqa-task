@@ -160,7 +160,7 @@ def parse_split_return_df(input_json: str, output_dir: str, return_df: str = "fu
         "test": test,
         "val": val,
         "full": formatted_data,
-        "tiny": test.sample(n=20)
+        "tiny": test.sample(n=10)
     }
     try:
         return df_map[return_df]
