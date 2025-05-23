@@ -98,25 +98,24 @@ Discuss results here
 
 I ran out of time before I could finish everything I wanted to do, so the system has some limitations. There is no true user entrypoint - our main script is only for running and reproducing evaluations, not for interactive use. If I had more time to iterate on this, I would have added a terminal-based entrypoint for interactive use with a random dataset sample.
 
-Likewise, the output quality of this agent is largely reliant on the model we use. It's not a fully comprehensive system in that respect - just a workflow for handling multi-turn conversations based on the ConvFinQA dataset. If I had more time, I'd evaluate several different models and explore fine-tuning to see if I could improve the output quality.
+The overall performance is not particularly good. {{Discuss metrics from full eval run}}. Turn-based degradation is significant, with an average of {x} drop in accuracy on a per-turn basis. Likewise, overall accuracy sits at {y}.
+
+With such a simple system, performance is largely reliant on the model we use. It's not a fully comprehensive system in that respect - just a workflow for handling multi-turn conversations based on the ConvFinQA dataset. If I had more time, I'd evaluate several different models and explore fine-tuning to see if I could improve the output quality.
 
 
 #### Strengths
 
-The agent is simple and easy to use. It's also fast and cost effective (insert avg cost per query here).
+The agent is simple and easy to use, with overall good latency and cost-effectiveness.
 
 The data structure is comprehensive and clear.
 
-The results are (((good/bad/ok))).
-
-The output structure is highly reliable.
-
 #### What I'd do differently
-This is what I would do differently if I had more time, or if I carry on with this project in the future:
+This is what I would do differently if I had more time, or if I carry on with this project in the future, in order of importance:
 
+- Implement CI/CD, just a basic GitHub workflow.
 - Evaluate different reasoning models to identify the best choice for this system.
-- Test out RLF fine-tuning.
+- Add functions to measure latency and tokens per turn.
 - Create an entrypoint for user queries.
-- Add a more comprehensive, domain-specific toolset, possibly even connect to a relevant MCP server, to provide more context and user capabilities.
-- Evaluate results for domain-specific error analysis.
-- Add some CI/CD, just a basic GitHub workflow.
+- Evaluate results for domain-specific error analysis to identify common points of failure.
+- Add a more comprehensive, domain-specific toolset, possibly even connect to a relevant MCP server, to provide more context and user capabilities beyond that of the dataset.
+- Test out RLF fine-tuning when exploring other models.
