@@ -3,11 +3,14 @@ from .models import Turn
 from data.parsing import parse_split_return_df
 import numpy as np
 import asyncio
+from .evals import run_eval
 
-async def main():
-    # Format the data, save for later use and return the df we're working with (test set in this case)
-    print("-- Formatting data --")
-    test_data = parse_split_return_df("/Users/mac/convfinqa-task/data/original_convfinqa_train.json", "/Users/mac/convfinqa-task/data/formatted_dataset", "test")
+import argparse
+
+async def main(mode="tiny"):
+    # Format the data, save for later use and return the df we're working with (test set for evals, tiny for code reproducibility)
+    print(f"-- Formatting data for mode: {mode} --")
+    test_data = parse_split_return_df("/Users/mac/convfinqa-task/data/original_convfinqa_train.json", "/Users/mac/convfinqa-task/data/formatted_dataset", mode)
     print("-- Data formatted --")
 
     # Get conversation ids and iteratively run turns through the agent, preserving qa history for each turn
@@ -56,8 +59,10 @@ async def main():
 
     # Run eval metrics and print results
     print("-- Running Evaluation... --")
-    # evals = evaluate(results_df)
-    # print(evals)
+    run_eval(results_df, test_data)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    parser = argparse.ArgumentParser(description="Run ConvFinQA agent and evaluation.")
+    parser.add_argument('--mode', type=str, default="tiny", choices=["tiny", "test", "full"], help='Which data split to run: tiny (quick test) or test (full evals) or full (entire dataset performance)')
+    args = parser.parse_args()
+    asyncio.run(main(mode=args.mode))
