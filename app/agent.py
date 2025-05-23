@@ -9,10 +9,6 @@ from agents import (
     function_tool,
 )
 
-class ToolReturn(BaseModel):
-    answer: Any = Field(description="The answer to the question calculated by the tool")
-    program: str = Field(description="The program used to answer the question e.g add(1, 2)")
-
 @function_tool
 def add(a: int, b: int) -> ToolReturn:
     """Add two numbers."""

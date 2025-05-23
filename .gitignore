@@ -1,5 +1,4 @@
-data
 .env
 .venv
-wrangling.ipynb
 __pycache__
+data
