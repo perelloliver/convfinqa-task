@@ -2,7 +2,7 @@ from .agent import run_agent
 from .models import Turn
 from data.parsing import parse_split_return_df
 from .evals import run_eval
-from .utils import batch_data, flatten_turns
+from .utils import filter_errors_for_eval, batch_data, flatten_turns
 import pandas as pd
 import asyncio
 
@@ -30,40 +30,68 @@ async def main(mode="tiny"):
             msg_chain = []
             msg_chain.append({"role": "user", "content": f"Review this financial data to answer my question: {conversation['context'].iloc[0]}"})
             
-            for idx, turn in conversation.iterrows():
-                print(f"--turn {turn.turn_index} start--")
-                msg_chain.append({"role": "user", "content": turn["current_question"]})
-                qa_history, response = await run_agent(msg_chain)
-                print("---DEBUG FORMATTING---")
-                print(response)
-                print(qa_history)
-                turn = Turn(
-                    id=id,
-                    turn_index=turn["turn_index"],
-                    type=turn["type"],
-                    qa_history=msg_chain,
-                    agent_answer=response.answer,
-                    agent_program=response.program
-                )
-                print(f"--turn {turn.turn_index} complete--")
-                print(turn)
-                msg_chain = qa_history
-                turns.append(turn)
+            try:
+                for idx, turn in conversation.iterrows():
+                    print(f"--turn {turn.turn_index} start--")
+                    msg_chain.append({"role": "user", "content": turn["current_question"]})
+                    qa_history, response = await run_agent(msg_chain)
+                    print("---DEBUG FORMATTING---")
+                    print(response)
+                    print(qa_history)
+                    turn = Turn(
+                        id=id,
+                        turn_index=turn["turn_index"],
+                        type=turn["type"],
+                        qa_history=msg_chain,
+                        agent_answer=response.answer,
+                        agent_program=response.program
+                    )
+                    print(f"--turn {turn.turn_index} complete--")
+                    print(turn)
+                    msg_chain = qa_history
+                    turns.append(turn)
+            except Exception as e:
+                print(f"Error for id={id}: {type(e).__name__}: {e}")
+                turns.append({
+                    'id': id,
+                    'turn_index': None,
+                    'type': None,
+                    'qa_history': None,
+                    'agent_answer': None,
+                    'agent_program': None,
+                    'error': True,
+                    'error_type': type(e).__name__
+                })
+            except Exception as e:
+                print(f"Error for id={id}: {type(e).__name__}: {e}")
+                turns.append({
+                    'id': id,
+                    'turn_index': None,
+                    'type': None,
+                    'qa_history': None,
+                    'agent_answer': None,
+                    'agent_program': None,
+                    'error': True,
+                    'error_type': type(e).__name__
+                })
             print(f"--conversation {id} complete--")
             conversations.append(turns)
         print(f"--batch {batch_idx} complete--")
 
     # Save to csv using helper for DRY
     results_df = flatten_turns(conversations)
-    results_df.to_csv("/Users/mac/convfinqa-task/data/responses.csv", mode="a", index=False)
+    results_df.to_csv("/plUsers/mac/convfinqa-task/data/responses.csv", mode="a", index=False)
 
     # Debug: print columns before eval
     print("results_df columns:", results_df.columns)
     print("test_data columns:", test_data.columns)
 
+    filtered_results, filtered_test, n_errors, error_types = filter_errors_for_eval(results_df, test_data)
+    print(f"Filtered out {n_errors} conversations with errors. Error types encountered: {error_types}")
+
     # Run eval metrics and print results
     print("-- Running Evaluation... --")
-    run_eval(results_df, test_data)
+    run_eval(filtered_results, filtered_test)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run ConvFinQA agent and evaluation.")

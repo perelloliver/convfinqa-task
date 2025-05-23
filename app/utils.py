@@ -7,6 +7,21 @@ def to_percent(val, decimals=2):
     """Convert a float (0-1) to a percentage string with specified decimals."""
     return f"{val * 100:.{decimals}f}%"
 
+def filter_errors_for_eval(results_df, test_df, error_column='error', error_type_column='error_type'):
+    """
+    Filter out rows with any error (error_column is truthy) from both results and test data.
+    Returns: (filtered_results_df, filtered_test_df, n_errors, error_types)
+    """
+    if error_column not in results_df.columns:
+        return results_df, test_df, 0, []
+    error_rows = results_df[results_df[error_column]]
+    error_ids = set(error_rows['id'])
+    error_types = error_rows[error_type_column].unique().tolist() if error_type_column in error_rows.columns else []
+    n_errors = len(error_ids)
+    filtered_results = results_df[~results_df['id'].isin(error_ids)].copy()
+    filtered_test = test_df[~test_df['id'].isin(error_ids)].copy()
+    return filtered_results, filtered_test, n_errors, error_types
+
 def batch_data(data):
     """Split data into batches of 100 for handling large datasets"""
     num_samples = len(data)
