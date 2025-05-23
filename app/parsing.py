@@ -141,7 +141,7 @@ def dataset_split_preserve_conversations(df: pd.DataFrame, output_dir: str) -> p
     test.to_csv(output_dir + "/test_15.csv", index=False)
     return train, test, val
     
-def parse_split_return_df(input_json: str, output_dir: str, return_df: str = "full") -> pd.DataFrame:
+def parse_split_return_df(input_json: str, output_dir: str, return_df: str = "tiny") -> pd.DataFrame:
     """
     Parses the dataset, saves splits, and returns the requested DataFrame (default full).
     return_df: one of 'train', 'test', 'val', 'full'

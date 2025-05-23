@@ -1,6 +1,6 @@
 from .agent import run_agent
 from .models import Turn
-from data.parsing import parse_split_return_df
+from .parsing import parse_split_return_df
 from .evals import run_eval
 from .utils import filter_errors_for_eval, batch_data, flatten_turns
 import pandas as pd
@@ -95,11 +95,12 @@ async def main(mode="tiny", llm="gpt-4.1-2025-04-14"):
     print(f"-- RESULTS FOR MODEL {llm} --")
     run_eval(filtered_results, filtered_test)
 
+async def run(mode:str, llms:list):
+    tasks = [main(mode=mode, llm=llm) for llm in llms]
+    await asyncio.gather(*tasks)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run ConvFinQA agent and evaluation.")
     parser.add_argument('--mode', type=str, default="tiny", choices=["tiny", "test", "full"], help='Which data split to run: tiny (quick test) or test (full evals) or full (entire dataset performance)')
     args = parser.parse_args()
-
-    llms = ["o1-pro-2025-03-19", "o3-2025-04-16","gpt-4.1-2025-04-14" ]
-    tasks = [main(mode=args.mode, llm=llm) for llm in llms]
-    asyncio.run(asyncio.gather(*tasks))
+    asyncio.run(run(mode=args.mode, llms=["o1-pro-2025-03-19", "o3-2025-04-16","gpt-4.1-2025-04-14" ]))

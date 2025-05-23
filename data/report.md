@@ -30,6 +30,9 @@ Build an LLM agent driven prototype that can answer conversational questions abo
 
 ## Method
 
+#### High level design
+
+
 #### Solution
 
 First, I laid out a basic system design and defined a core data schema from which to model our dataset. The model, ```DatasetConvQaParsed```, is a simple representation of a turn in a conversation, with separate, parsed fields for us to use in prompt chaining and evaluations.
