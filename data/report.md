@@ -113,6 +113,7 @@ The data structure is comprehensive and clear.
 This is what I would do differently if I had more time, or if I carry on with this project in the future, in order of importance:
 
 - Implement CI/CD, just a basic GitHub workflow.
+- Improve error handling and logging to prevent data loss and overall improve system performance.
 - Evaluate different reasoning models to identify the best choice for this system.
 - Add functions to measure latency and tokens per turn.
 - Create an entrypoint for user queries.

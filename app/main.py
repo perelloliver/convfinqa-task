@@ -80,7 +80,7 @@ async def main(mode="tiny"):
 
     # Save to csv using helper for DRY
     results_df = flatten_turns(conversations)
-    results_df.to_csv("/plUsers/mac/convfinqa-task/data/responses.csv", mode="a", index=False)
+    results_df.to_csv("/Users/mac/convfinqa-task/data/responses.csv", mode="a", index=False)
 
     # Debug: print columns before eval
     print("results_df columns:", results_df.columns)
