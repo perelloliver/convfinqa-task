@@ -49,13 +49,13 @@ def direct_retrieval(a: int | float) -> ToolReturn:
     return ToolReturn(answer=a, program=a)
 
 @async_retry(retries=3, delay=2, backoff=2)
-async def run_agent(msg_chain: List[Dict[str, str]]):
+async def run_agent(msg_chain: List[Dict[str, str]], llm: str = "gpt-4.1-2025-04-14"):
     agent = Agent(
             name="Financial Conversation QA Agent",
             instructions="You are a helpful agent. You analyze financial documents and tables to answer questions accurately. For each user question, you return both the numerical answer and the program/calculation you used to derive it (e.g., answer: 117.3, program: subtract(9362.2, 9244.9)). You do not return any other text. Return your tool call output nand the associated program precisely if it is correct.",
             tools=[add, subtract, multiply, divide, percentage, exponential, greater, direct_retrieval],
             output_type=Answer,
-            model = "gpt-4.1-mini-2025-04-14"
+            model = llm
         )
     print("-- Running agent --")
     result = await Runner.run(agent, msg_chain)

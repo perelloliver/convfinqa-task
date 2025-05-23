@@ -8,7 +8,7 @@ import asyncio
 
 import argparse
 
-async def main(mode="tiny"):
+async def main(mode="tiny", llm="gpt-4.1-2025-04-14"):
     # Format the data, save for later use and return the df we're working with (test set for evals, tiny for code reproducibility)
     print(f"-- Formatting data for mode: {mode} --")
     test_data = parse_split_return_df("/Users/mac/convfinqa-task/data/original_convfinqa_train.json", "/Users/mac/convfinqa-task/data/formatted_dataset", mode)
@@ -21,6 +21,7 @@ async def main(mode="tiny"):
     conversation_batches = batch_data(conversation_ids)
     conversations = []
 
+    print(f"-- Running agent with LLM: {llm} --")
     for batch_idx, batch in enumerate(conversation_batches):
         print(f"--batch {batch_idx} start--")
         for id in batch:
@@ -34,7 +35,7 @@ async def main(mode="tiny"):
                 for idx, turn in conversation.iterrows():
                     print(f"--turn {turn.turn_index} start--")
                     msg_chain.append({"role": "user", "content": turn["current_question"]})
-                    qa_history, response = await run_agent(msg_chain)
+                    qa_history, response = await run_agent(msg_chain, llm)
                     print("---DEBUG FORMATTING---")
                     print(response)
                     print(qa_history)
@@ -91,10 +92,14 @@ async def main(mode="tiny"):
 
     # Run eval metrics and print results
     print("-- Running Evaluation... --")
+    print(f"-- RESULTS FOR MODEL {llm} --")
     run_eval(filtered_results, filtered_test)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run ConvFinQA agent and evaluation.")
     parser.add_argument('--mode', type=str, default="tiny", choices=["tiny", "test", "full"], help='Which data split to run: tiny (quick test) or test (full evals) or full (entire dataset performance)')
     args = parser.parse_args()
-    asyncio.run(main(mode=args.mode))
+
+    llms = ["o1-pro-2025-03-19", "o3-2025-04-16","gpt-4.1-2025-04-14" ]
+    tasks = [main(mode=args.mode, llm=llm) for llm in llms]
+    asyncio.run(asyncio.gather(*tasks))
