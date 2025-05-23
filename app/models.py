@@ -5,7 +5,7 @@ class ToolReturn(BaseModel):
     answer: Any = Field(description="The answer to the question calculated by the tool")
     program: str = Field(description="The program used to answer the question e.g add(1, 2)")
 
-class AgentConvQaAnswer(BaseModel):
+class Turn(BaseModel):
     id: str = Field(description="conversation id")
     turn_index: int = Field(description="turn count")
     type: str = Field(description="Type I or II")

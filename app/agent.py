@@ -1,10 +1,10 @@
 # Basic agent to test method
-import asyncio
-from typing import Any
+import asyncio 
+from .models import ToolReturn
+from typing import Any, List, Dict
 from pydantic import BaseModel, Field
 from agents import (
     Agent,
-    ModelSettings,
     Runner,
     function_tool,
 )
@@ -50,6 +50,23 @@ def direct_retrieval(a: int | float) -> ToolReturn:
     """ Return the correct answer format for a direct data lookup, when you don't have a program to return."""
     return ToolReturn(answer=a, program=a)
 
+async def run_agent(msg_chain: List[Dict[str, str]]):
+    agent = Agent(
+            name="Financial Conversation QA Agent",
+            instructions="You are a helpful agent. You analyze financial documents and tables to answer questions accurately. For each user question, you return both the numerical answer and the program/calculation you used to derive it (e.g., answer: 117.3, program: subtract(9362.2, 9244.9)). You do not return any other text. Return your tool call output nand the associated program precisely if it is correct.",
+            tools=[add, subtract, multiply, divide, percentage, exponential, greater, direct_retrieval],
+            model = "o3-mini-2025-01-31",
+        )
+
+    print("Running agent...")
+    result = await Runner.run(agent, msg_chain)
+    print(result)
+    qa_history = result.to_input_list()
+    print(qa_history)
+    answer = result.final_output
+    print(answer)
+    return qa_history, answer
+
 random_test_msg_chain = [
   {
     "role": "system",
@@ -77,18 +94,7 @@ random_test_msg_chain = [
   }
 ]
 
-async def agent_test():
-    agent = Agent(
-            name="Math agent",
-            instructions="You are a helpful agent. For each math question, you return the answer and the program you used to calculate it e.g answer: 5, program: add(2, 3)",
-            tools=[add, subtract, multiply, divide, percentage, exponential, greater, direct_retrieval],
-            model_settings=ModelSettings(
-            ),
-        )
-
-    result = await Runner.run(agent, random_test_msg_chain)
-    print(result.final_output)
-
 if __name__ == "__main__":
-    asyncio.run(agent_test())
+    asyncio.run(run_agent(random_test_msg_chain))
+
     
