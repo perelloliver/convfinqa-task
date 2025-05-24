@@ -23,7 +23,6 @@ async def main(mode="tiny", llm="gpt-4.1-2025-04-14"):
 
     print(f"-- Running agent with LLM: {llm} --")
     for batch_idx, batch in enumerate(conversation_batches):
-        print(f"--batch {batch_idx} start--")
         for id in batch:
             print(f"--conversation {id} start--")
             conversation = test_data[test_data["id"] == id]
@@ -36,9 +35,6 @@ async def main(mode="tiny", llm="gpt-4.1-2025-04-14"):
                     print(f"--turn {turn.turn_index} start--")
                     msg_chain.append({"role": "user", "content": turn["current_question"]})
                     qa_history, response = await run_agent(msg_chain, llm)
-                    print("---DEBUG FORMATTING---")
-                    print(response)
-                    print(qa_history)
                     turn = Turn(
                         id=id,
                         turn_index=turn["turn_index"],
@@ -48,7 +44,6 @@ async def main(mode="tiny", llm="gpt-4.1-2025-04-14"):
                         agent_program=response.program
                     )
                     print(f"--turn {turn.turn_index} complete--")
-                    print(turn)
                     msg_chain = qa_history
                     turns.append(turn)
             except Exception as e:
@@ -77,21 +72,13 @@ async def main(mode="tiny", llm="gpt-4.1-2025-04-14"):
                 })
             print(f"--conversation {id} complete--")
             conversations.append(turns)
-        print(f"--batch {batch_idx} complete--")
 
     # Save to csv using helper for DRY
     results_df = flatten_turns(conversations)
     results_df.to_csv("/Users/mac/convfinqa-task/data/responses.csv", mode="a", index=False)
 
-    # Debug: print columns before eval
-    print("results_df columns:", results_df.columns)
-    print("test_data columns:", test_data.columns)
-
     filtered_results, filtered_test, n_errors, error_types = filter_errors_for_eval(results_df, test_data)
-    print(f"Filtered out {n_errors} conversations with errors. Error types encountered: {error_types}")
-
-    # Run eval metrics and print results
-    print("-- Running Evaluation... --")
+    print(f"Filtered out {n_errors} conversations with errors from evaluations. Error types encountered: {error_types}")
     print(f"-- RESULTS FOR MODEL {llm} --")
     run_eval(filtered_results, filtered_test)
 
@@ -103,4 +90,5 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run ConvFinQA agent and evaluation.")
     parser.add_argument('--mode', type=str, default="tiny", choices=["tiny", "test", "full"], help='Which data split to run: tiny (quick test) or test (full evals) or full (entire dataset performance)')
     args = parser.parse_args()
-    asyncio.run(run(mode=args.mode, llms=["o1-pro-2025-03-19", "gpt-4.1-2025-04-14" ]))
+    # asyncio.run(main(mode=args.mode, llm="gpt-4.1-mini-2025-04-14")) # Dev
+    asyncio.run(run(mode=args.mode, llms=["o1-pro-2025-03-19", "gpt-4.1-2025-04-14" ])) # Evals
