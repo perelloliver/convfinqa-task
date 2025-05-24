@@ -1,3 +1,9 @@
+# TODO Prior to Submission:
+- Proofread report
+- Run evals on chosen models and write in results / discuss
+- Clean up comments
+- Test containerized run, check Dockerfile, update requirements
+
 # ConvFinQA Task
 
 This repository implements a financial conversation QA agent using the ConvFinQA dataset.
