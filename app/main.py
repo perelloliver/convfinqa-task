@@ -73,7 +73,6 @@ async def main(mode="tiny", llm="gpt-4.1-2025-04-14"):
             print(f"--conversation {id} complete--")
             conversations.append(turns)
 
-    # Save to csv using helper for DRY
     results_df = flatten_turns(conversations)
     results_df.to_csv("/Users/mac/convfinqa-task/data/responses.csv", mode="a", index=False)
 

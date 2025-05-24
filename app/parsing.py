@@ -3,6 +3,7 @@ import pandas as pd
 from app.models import DatasetConvQaParsed
 from sklearn.model_selection import train_test_split
 import os
+import json
 
 def format_context(pre_text: str, table: Any, post_text: str) -> str:
     """
@@ -97,7 +98,6 @@ def dataset_parse(json_path: str) -> pd.DataFrame:
     """
     Load a dataset JSON file, parse it, and return a DataFrame with one row per turn.
     """
-    import json
     with open(json_path, 'r') as f:
         data = json.load(f)
     parsed = [parse_conversation_entry(entry) for entry in data]

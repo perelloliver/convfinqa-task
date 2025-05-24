@@ -1,7 +1,7 @@
 import numpy as np
 import asyncio 
-import time
 from functools import wraps
+import pandas as pd
 
 def to_percent(val, decimals=2):
     """Convert a float (0-1) to a percentage string with specified decimals."""
@@ -33,7 +33,6 @@ def flatten_turns(conversations):
     Flatten a list of lists of Turn objects and return as DataFrame.
     Each Turn should be a Pydantic model or have a .dict() method.
     """
-    import pandas as pd
     flat_turns = [t.dict() if hasattr(t, "dict") else vars(t) for turns in conversations for t in turns]
     df = pd.DataFrame(flat_turns)
     return df

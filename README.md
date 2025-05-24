@@ -19,21 +19,20 @@ This repository implements a financial conversation QA agent using the ConvFinQA
 ## Getting Started
 
 ### Requirements
-- Docker (recommended)
 - An OpenAI API Key
-- Or: Python 3.10+, pip, virtualenv
+- Docker or Python 3.10+ and pip
 
 ### Quickstart (Docker)
 
 1. Set your OpenAI API key in the .env file (use .env.example as a template) or as an environment variable in your terminal.
 
 2. Build the image:
-   ```sh
-   docker build -t convfinqa .
+   ```
+   docker build -t convfinqa-task .
    ```
 
 3. Run the container (choose mode: `tiny` for quick test, `test` for full eval):
-   ```sh
+   ```
    docker run --rm -v $(pwd):/app convfinqa --mode tiny
    # or
    docker run --rm -v $(pwd):/app convfinqa --mode test
@@ -41,16 +40,16 @@ This repository implements a financial conversation QA agent using the ConvFinQA
 
 ### Quickstart (Local)
 
-1. Set your OpenAI API key in the .env file (use .env.example as a template) or as an environment variable in your terminal.
+1. Set your OpenAI API key in the .env file (use .env.example as a template) or export as an environment variable in your terminal.
 
 2. Install dependencies:
-   ```sh
+   ```
    python -m venv venv
    source venv/bin/activate
    pip install -r requirements.txt
    ```
 3. Run the main script:
-   ```sh
+   ```
    python -m app.main --mode tiny   # For a quick test
    python -m app.main --mode test   # For full evaluation
    ```
@@ -65,4 +64,4 @@ This repository implements a financial conversation QA agent using the ConvFinQA
 
 ## Project Structure
 - `app/` - Main application code with agent, evals, models, and main.
-- `data/` - Datasets - original, parsed, and responses.
+- `data/` - Datasets - Only the original dataset - running the script will generate formatted data and responses. Our formatted dataset will save to data/formatted_dataset with test, train, validate sets and a full unsplit dataset. Our responses will save to the main /data dir as responses.csv

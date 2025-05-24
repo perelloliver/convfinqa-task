@@ -7,6 +7,8 @@ from agents import (
     function_tool,
 )
 
+# TODO: Try out adding deep tool descriptions for our agent
+
 @function_tool
 def add(a: int, b: int) -> ToolReturn:
     """Add two numbers."""
@@ -39,12 +41,11 @@ def exponential(a: int, b: int) -> ToolReturn:
 
 @function_tool  
 def greater(a: float | int, b: float | int) -> ToolReturn:
-    """Compare two numbers: returns True if a > b"""
-    result = a > b
-    return ToolReturn(answer=result, program=f"greater({a}, {b})")
+    """Compare two numbers: returns the greater sum"""
+    return ToolReturn(answer=max(a,b), program=f"greater({a}, {b})")
 
 @function_tool
-def direct_retrieval(a: int | float) -> ToolReturn:
+def format_direct_retrieval(a: int | float) -> ToolReturn:
     """ Return the correct answer format for a direct data lookup, when you don't have a program to return."""
     return ToolReturn(answer=a, program=a)
 
@@ -53,7 +54,7 @@ async def run_agent(msg_chain: List[Dict[str, str]], llm: str = "gpt-4.1-2025-04
     agent = Agent(
             name="Financial Conversation QA Agent",
             instructions="You are a helpful agent. You analyze financial documents and tables to answer questions accurately. For each user question, you return both the numerical answer and the program/calculation you used to derive it (e.g., answer: 117.3, program: subtract(9362.2, 9244.9)). You do not return any other text. Return your tool call output nand the associated program precisely if it is correct.",
-            tools=[add, subtract, multiply, divide, percentage, exponential, greater, direct_retrieval],
+            tools=[add, subtract, multiply, divide, percentage, exponential, greater, format_direct_retrieval],
             output_type=Answer,
             model = llm
         )

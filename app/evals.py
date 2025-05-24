@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression   
-from .utils import to_percent, filter_errors_for_eval  # filter_errors_for_eval used in main, not here
-# Evaluation metrics implementation
+from .utils import to_percent
 
 def answer_accuracy(df):
     """Compute answer accuracy (exact match or close for floats)"""
@@ -12,10 +11,9 @@ def answer_accuracy(df):
         print("Agent answer:", a)
         print("Gold answer:", g)
         try:
-            # Try float comparison with tolerance
-            return np.isclose(float(a), float(g), atol=1e-3)
-        except Exception:
-            return str(a).strip() == str(g).strip()
+            return a == g # Bool
+        except Exception as e:
+            print(f"Error comparing values in conversation {row['id']} for turn {row['turn_id']}")
     correct = df.apply(is_correct, axis=1)
     return correct.mean(), correct
 
@@ -46,13 +44,17 @@ def run_eval(orig_df, agent_df):
     """
     # Merge on id and turn_index
     merged = pd.merge(orig_df, agent_df, on=['id', 'turn_index', 'type'], suffixes=('', '_agent'))
-    # Map agent columns to expected names if needed
+    
+    # Map agent columns to expected names
     for col in ['agent_answer', 'agent_program']:
         if col not in merged.columns:
             merged[col] = merged.get(f'{col}_agent', None)
+    
     print("--- Evaluation Results ---")
     acc, _ = answer_accuracy(merged)
+    
     print(f"Overall Answer Accuracy: {to_percent(acc)}")
     turn_acc, _, degradation_rate = turn_based_performance(merged)
+   
     print(f"Turn-based Accuracy:{turn_acc}")
     print(f"Turn Degradation Rate: {to_percent(degradation_rate)}")
