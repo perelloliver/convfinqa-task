@@ -103,4 +103,4 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run ConvFinQA agent and evaluation.")
     parser.add_argument('--mode', type=str, default="tiny", choices=["tiny", "test", "full"], help='Which data split to run: tiny (quick test) or test (full evals) or full (entire dataset performance)')
     args = parser.parse_args()
-    asyncio.run(run(mode=args.mode, llms=["o1-pro-2025-03-19", "o3-2025-04-16","gpt-4.1-2025-04-14" ]))
+    asyncio.run(run(mode=args.mode, llms=["o1-pro-2025-03-19", "gpt-4.1-2025-04-14" ]))
