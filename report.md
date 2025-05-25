@@ -163,7 +163,7 @@ I ran out of time before I could finish everything I wanted to do, so the system
 
 There is no true interactive entrypoint - our main script is only for running and reproducing evaluations, not for interactive use. If I had more time to iterate on this, I would have added a terminal-based entrypoint for interactive use with a random dataset sample, so the user can see the data, ask questions, and receive answers from the agent in a real multi-turn conversation.
 
-Due to cost and time constraints, I was only able to run evaluations on ```tiny``` mode, which runs over 25 examples per model. I ran this tiny evaluation for all models I selected. From this small sample, the overall performance is not particularly good, and it's hard to identify turn-based accuracy on such a small set which may not feature a large number of multi-turn conversations, as discussed above.
+Due to cost and time constraints, I was only able to run evaluations on ```tiny``` mode, which runs over 10 examples per model. I ran this tiny evaluation for all models I selected. From this small sample, the overall performance is not particularly good, and it's hard to identify turn-based accuracy on such a small set which may not feature a large number of multi-turn conversations, as discussed above.
 
 With such a simple system, performance is largely reliant on the model we use. It's not a fully comprehensive system in that respect - just a workflow for handling multi-turn conversations based on the ConvFinQA dataset. If I had more time, not only would I evaluate multiple models for best performance, but I would add complexity and robustness to the agent for improved output.
 
@@ -182,3 +182,4 @@ This is what I would do differently if I had more time, or if I carry on with th
 - Create an entrypoint for user queries.
 - Evaluate results for domain-specific error analysis and tool-calling behaviour to identify common points of failure.
 - Add a more comprehensive, domain-specific toolset, possibly even connect to relevant MCP server(s), to provide more context and agent capabilities beyond that of the original paper in order to provide a more comprehensive user experience.
+- Potentially, translate the system to a model-agnostic LangGraph implementation to avoid vendor lock-in.
