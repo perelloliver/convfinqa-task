@@ -173,7 +173,7 @@ I would constrain tool calling by setting a custom tool use behaviour for our ag
 This is what I would do differently if I had more time, or if I carry on with this project in the future, in order of importance:
 
 - Run evaluation on our full test dataset to gain a clear understanding of systemic strengths and weaknesses based on performance.
-- Reimplement containerization which works alongside a quickstart route for simple local runs.
+- Reimplement containerization alongside a quickstart route for simple local runs.
 - Implement CI/CD, just a basic GitHub workflow for now. 
 - Create a custom tool use behaviour for the agent to avoid infinite tool loops and overcomplicated answer chains.
 - Improve error handling and logging to prevent data loss and overall improve system performance.
