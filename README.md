@@ -3,12 +3,12 @@
 This repository implements a financial conversation QA agent using the ConvFinQA dataset.
 
 ## Main components:
+- Report: A markdown file containing a written report of the task: methodology, outcomes, assessment and next actions.
 - Agent: A simple agent which uses the OpenAI agents SDK.
 - Evals: Evaluation metrics for agent performance compared to dataset ground truth.
 - Models: Data models for parsing dataset and storing agent responses.
 - Main: Main script to run the agent and evaluation.
 - Parsing: Data parsing script to convert ConvFinQA dataset into an easily usable format for prompting and evaluation.
-- Report: A markdown file containing a written report of the task: methodology, outcomes, assessment and next actions.
 
 ## Getting Started
 
