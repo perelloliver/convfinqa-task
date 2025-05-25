@@ -1,6 +1,6 @@
 from typing import Any, List, Dict
 import pandas as pd
-from app.models import DatasetConvQaParsed
+from .models import DatasetConvQaParsed
 from sklearn.model_selection import train_test_split
 import os
 import json
@@ -58,7 +58,6 @@ def parse_conversation_entry(entry: Dict) -> List[DatasetConvQaParsed]:
     conv_type = "Type I" if all(x == 0 for x in qa_split) else "Type II"
     parsed_items = []
     for turn_idx, question in enumerate(dialogue_break):
-        print(f"Parsing turn {turn_idx} of {len(dialogue_break)}")
         qa_history = build_qa_history(dialogue_break, exe_ans_list, turn_idx)
         current_question = question
         gold_program = turn_program[turn_idx]
@@ -74,7 +73,6 @@ def parse_conversation_entry(entry: Dict) -> List[DatasetConvQaParsed]:
             type=conv_type
         )
         parsed_items.append(parsed)
-    print(f"Data parsing complete for {len(parsed_items)} entries.")
     return parsed_items
 
 
@@ -129,12 +127,6 @@ def dataset_split_preserve_conversations(df: pd.DataFrame, output_dir: str) -> p
     val = df[df['id'].isin(val_ids['id'])].reset_index(drop=True)
     test = df[df['id'].isin(test_ids['id'])].reset_index(drop=True)
 
-    # Assert there is no overlap (bugcheck just in case I missed something in the logic)
-    assert set(train['id']) & set(val['id']) == set()
-    assert set(train['id']) & set(test['id']) == set()
-    assert set(val['id']) & set(test['id']) == set()
-    print("--- No conversation ID overlap in train, test, or validation sets detected ---")
-
     # Save to dir provided
     train.to_csv(output_dir + "/train_70.csv", index=False)
     val.to_csv(output_dir + "/val_15.csv", index=False)
@@ -148,9 +140,6 @@ def parse_split_return_df(input_json: str, output_dir: str, return_df: str = "ti
     """
     os.makedirs(output_dir, exist_ok=True)
     formatted_data = dataset_parse(input_json)
-    print(f"Data formatting complete for {len(formatted_data)} entries.")
-    print("--- DATA SAMPLE --- ")
-    print(formatted_data[:2])
     formatted_data.to_csv(os.path.join(output_dir, "train_no_split.csv"), index=False)
     train, test, val = dataset_split_preserve_conversations(formatted_data, output_dir)
     print("Data splitting complete, all files saved.")

@@ -1,9 +1,3 @@
-# TODO Prior to Submission:
-- Proofread report
-- Run evals on chosen models and write in results / discuss
-- Clean up comments
-- Test containerized run, check Dockerfile, update requirements
-
 # ConvFinQA Task
 
 This repository implements a financial conversation QA agent using the ConvFinQA dataset.
@@ -19,28 +13,12 @@ This repository implements a financial conversation QA agent using the ConvFinQA
 ## Getting Started
 
 ### Requirements
-- An OpenAI API Key
-- Docker or Python 3.10+ and pip
-
-### Quickstart (Docker)
-
-1. Set your OpenAI API key in the .env file (use .env.example as a template) or as an environment variable in your terminal.
-
-2. Build the image:
-   ```
-   docker build -t convfinqa-task .
-   ```
-
-3. Run the container (choose mode: `tiny` for quick test, `test` for full eval):
-   ```
-   docker run --rm -v $(pwd):/app convfinqa --mode tiny
-   # or
-   docker run --rm -v $(pwd):/app convfinqa --mode test
-   ```
+- A funded OpenAI API Key
+- Python 3.10+ and pip
 
 ### Quickstart (Local)
 
-1. Set your OpenAI API key in the .env file (use .env.example as a template) or export as an environment variable in your terminal.
+1. Set your OpenAI API key in the .env file, or export as an environment variable in your terminal, as OPENAI_API_KEY
 
 2. Install dependencies:
    ```

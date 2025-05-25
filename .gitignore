@@ -1,5 +1,6 @@
 .env
 .venv
+venv
 __pycache__
 wrangling.ipynb
 data/formatted_dataset

@@ -24,7 +24,7 @@ Build an LLM agent driven prototype that can answer conversational questions abo
 - [x] Wrangle ConvFinQA dataset into a usable format reproducing multi-turn conversations via an LLM API.
 - [x] Develop a basic agent capable of answering multi-turn conversations from the ConvFinQA dataset.
 - [x] Wrap agent in a script to run and reproduce evaluations, starting from the raw dataset.
-- [x] Containerize, CI/CD, documentation, requirements, etc.
+- [x] Documentation, requirements, quick and easy entrypoint to run.
 - [x] Evaluate at least two different models on the test set.
 
 ## Method
@@ -68,8 +68,14 @@ Then, I iteratively implemented a basic agent. I usually work with LangGraph, bu
 I equipped our agent with a set of tools, largely similar to those used in the original ConvFinQA paper with a couple of additions - ```percentage``` and ```direct_retrieval```. The ```direct_retrieval``` tool is used by the LLM to retrieve a figure directly from the context. I added this tool to ensure we uniformly process and output results, providing a direct logical path for the agent even for non-mathematic queries.
 
 These tools output a ```ToolReturn``` object, which matches the format of the dataset to provide both a numeric answer and a program. 
+
 This ```ToolReturn``` object is then used to generate the final output for the agent in the ```Answer``` model.
 
+I then wrote some evaluation metrics, discussed below - one function per metric and a binding function to run all of them.
+
+Once the key steps were complete - a parsed dataset, a working agent, and evaluation metrics - I wrote a script in main.py to bind all of these elements together to parse the dataset, run the agent, and compute evaluation metrics at the end of the run, for all the models specified. 
+
+I also initially implemented some light containerization, but later scrapped it in favour of quickly making this code quickly runnable with no further requirements or setup, while respecting the suggested time scope.
 
 #### Choosing models
 - Practical factors:
@@ -104,7 +110,35 @@ If I had more time, I also would have:
     i. Dove into agent tool use: are there specific tools linked to high rates of failure? This is a whole-system evaluation: not just linked to model performance, but could be indicative of bugs in our system (like an incorrect mathematical tool or a description which confuses the model).
     ii. Explored domain-specific error analysis to see what types of errors were most common - like confusing revenue and profits. I would do this with an evaluator LLM, analysing model responses to understand logic chains and identify knowledge gaps.
 
-#### Results (discussed below)
+#### Results
+
+Due to API cost, I ran evaluations on two models on just ten examples per model. As such, our results aren't at all indicative of overall performance - 10 examples is far too narrow a sample to measure real performance. 
+
+GPT-4.1 performs better than o1-pro on this small dataset. This is interesting, and should be looked into further. However, to gauge real performance, a full test run is required.
+
+Unfortunately, turn-based degradation is immeasurable in these results, due to a lack of adequate multi-turn samples being present in the sample. For example, our run on o1-pro featured at least one conversation with five turns - this single conversation makes up more than half of our results for the model. 
+
+With a small sample, the varying factors which can surround failure can be easily conflated or missed. Identifying failure patterns in an accurate way, representative of the entire system, requires more data.
+
+**GPT-4.1**
+    Overall Answer Accuracy: 50.00%
+    Accuracy Per Turn:
+        - 0    0.750000
+        - 1    0.666667
+        - 2    0.000000
+        - 5    0.000000
+    Turn Degradation Rate: -15.48%
+
+**o1-pro**
+    Overall Answer Accuracy: 20.00%
+    Turn-based Accuracy:
+        - 0    1.0
+        - 1    0.0
+        - 2    0.0
+        - 3    0.0
+        - 4    0.0
+        - 5    0.0
+    Turn Degradation Rate: -14.29%
 
 #### Strengths
 
@@ -129,7 +163,9 @@ I would constrain tool calling by setting a custom tool use behaviour for our ag
 #### What I'd do differently
 This is what I would do differently if I had more time, or if I carry on with this project in the future, in order of importance:
 
-- Implement CI/CD, just a basic GitHub workflow for now.
+- Run evaluation on our full test dataset to gain a clear understanding of systemic strengths and weaknesses based on performance.
+- Reimplement containerization which works alongside a quickstart route for local runs.
+- Implement CI/CD, just a basic GitHub workflow for now. 
 - Create a custom tool use behaviour for the agent to avoid infinite tool loops and overcomplicated answer chains.
 - Improve error handling and logging to prevent data loss and overall improve system performance.
 - Evaluate different reasoning models to identify the best choice for this system - possibly fine-tune a model on the ConvFinQA dataset, ideally via reinforcement learning fine-tuning on a reasoning model.
