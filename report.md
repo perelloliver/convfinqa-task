@@ -75,7 +75,7 @@ I then wrote some evaluation metrics, discussed below - one function per metric 
 
 Once the key steps were complete - a parsed dataset, a working agent, and evaluation metrics - I wrote a script in main.py to bind all of these elements together to parse the dataset, run the agent, and compute evaluation metrics at the end of the run, for all the models specified. 
 
-I also initially implemented some light containerization, but later scrapped it in favour of quickly making this code quickly runnable with no further requirements or setup, while respecting the suggested time scope.
+I also initially implemented some light containerization, but later scrapped it in favour of quickly making this code easily runnable with no further requirements or setup, while respecting the suggested time scope.
 
 #### Choosing models
 - Practical factors:
