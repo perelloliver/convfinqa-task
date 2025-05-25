@@ -98,8 +98,10 @@ If I had more time and resources to experiment, I'd definitely test and evaluate
 #### Evaluation metric choices and reasoning
 
 I selected the following evaluation metrics:
-    i. Execution accuracy: was the answer right?
-    iii. Turn degradation: what is the average accuracy for each turn, and what is the degradation slope of accuracy over turns?
+
+- Execution accuracy: was the answer right?
+- Turn degradation: what is the average accuracy for each turn, and what is the degradation slope of accuracy over turns?
+    
 
 Execution accuracy is our key metric - getting the answer right is arguably the most important metric. Since our 'program' is programmatically generated via tool use, it's always equivalent if the answer is correct, so we don't require metrics for the program value.
 
@@ -107,8 +109,9 @@ Turn degradation is a metric I added to evaluate the agent's performance over ti
 
 If I had more time, I also would have:
 
-    i. Dove into agent tool use: are there specific tools linked to high rates of failure? This is a whole-system evaluation: not just linked to model performance, but could be indicative of bugs in our system (like an incorrect mathematical tool or a description which confuses the model).
-    ii. Explored domain-specific error analysis to see what types of errors were most common - like confusing revenue and profits. I would do this with an evaluator LLM, analysing model responses to understand logic chains and identify knowledge gaps.
+- Dove into agent tool use: are there specific tools linked to high rates of failure? This is a whole-system evaluation: not just linked to model performance, but could be indicative of bugs in our system (like an incorrect mathematical tool or a description which confuses the model).
+  
+- Explored domain-specific error analysis to see what types of errors were most common - like confusing revenue and profits. I would do this with an evaluator LLM, analysing model responses to understand logic chains and identify knowledge gaps.
 
 #### Results
 
@@ -121,24 +124,30 @@ Unfortunately, turn-based degradation is immeasurable in these results, due to a
 With a small sample, the varying factors which can surround failure can be easily conflated or missed. Identifying failure patterns in an accurate way, representative of the entire system, requires more data.
 
 **GPT-4.1**
-    Overall Answer Accuracy: 50.00%
-    Accuracy Per Turn:
-        - 0    0.750000
-        - 1    0.666667
-        - 2    0.000000
-        - 5    0.000000
-    Turn Degradation Rate: -15.48%
+```
+Overall Answer Accuracy: 50.00%
+
+Accuracy Per Turn:
+- 0    0.750000
+- 1    0.666667
+- 2    0.000000
+- 5    0.000000
+  
+Turn Degradation Rate: -15.48%
+```
 
 **o1-pro**
-    Overall Answer Accuracy: 20.00%
-    Turn-based Accuracy:
-        - 0    1.0
-        - 1    0.0
-        - 2    0.0
-        - 3    0.0
-        - 4    0.0
-        - 5    0.0
-    Turn Degradation Rate: -14.29%
+```
+Overall Answer Accuracy: 20.00%
+Turn-based Accuracy:
+- 0    1.0
+- 1    0.0
+- 2    0.0
+- 3    0.0
+- 4    0.0
+- 5    0.0
+Turn Degradation Rate: -14.29%
+```
 
 #### Strengths
 
@@ -154,7 +163,7 @@ I ran out of time before I could finish everything I wanted to do, so the system
 
 There is no true interactive entrypoint - our main script is only for running and reproducing evaluations, not for interactive use. If I had more time to iterate on this, I would have added a terminal-based entrypoint for interactive use with a random dataset sample, so the user can see the data, ask questions, and receive answers from the agent in a real multi-turn conversation.
 
-Due to cost and time constraints, I was only able to run evaluations on ```tiny``` mode, which runs over 25 examples per model. I ran this tiny evaluation for all models I selected. From this small sample, the overall performance is not particularly good, and it's hard to identify turn-based accuracy on such a small set which may not feature a large number of multi-turn conversations. {{Discuss metrics from full eval run}}.
+Due to cost and time constraints, I was only able to run evaluations on ```tiny``` mode, which runs over 25 examples per model. I ran this tiny evaluation for all models I selected. From this small sample, the overall performance is not particularly good, and it's hard to identify turn-based accuracy on such a small set which may not feature a large number of multi-turn conversations, as discussed above.
 
 With such a simple system, performance is largely reliant on the model we use. It's not a fully comprehensive system in that respect - just a workflow for handling multi-turn conversations based on the ConvFinQA dataset. If I had more time, not only would I evaluate multiple models for best performance, but I would add complexity and robustness to the agent for improved output.
 
@@ -164,7 +173,7 @@ I would constrain tool calling by setting a custom tool use behaviour for our ag
 This is what I would do differently if I had more time, or if I carry on with this project in the future, in order of importance:
 
 - Run evaluation on our full test dataset to gain a clear understanding of systemic strengths and weaknesses based on performance.
-- Reimplement containerization which works alongside a quickstart route for local runs.
+- Reimplement containerization which works alongside a quickstart route for simple local runs.
 - Implement CI/CD, just a basic GitHub workflow for now. 
 - Create a custom tool use behaviour for the agent to avoid infinite tool loops and overcomplicated answer chains.
 - Improve error handling and logging to prevent data loss and overall improve system performance.
